@@ -2,40 +2,42 @@ const request = require('request');// http request的套件
 
 const geocodeAddress = (address, callback) => {
     // encodeURIComponent可以將一般字串轉為encode類型
+    // %201301%20lombard%20street%20philadelphia
     const encodeAddress = encodeURIComponent(address);
 
     // 此套件第一個參數為option object
-// 第二個參數為一call back function
-// %201301%20lombard%20street%20philadelphia
-request({
-    url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeAddress}`,
-    json: true,// 這邊告訴http我們要JSON
-}, (error, response, body) => {
-    // 因為在上面所輸入的json true
-    // 在下面的body已經變為js了
-    // body指的是整個網頁的檔案或元素像是document之類的
-    // 所以說我們希望看到整個資料檔案，而不是js object時
-    // 我們用JSON.stringify來將body變回JSON
-    // 第二個argument我們不常使用，先設undefined
-    // 第三個argument是轉出的JSON data的格式定義
-    // 也就是指定在縮進中有多少空間
-    if(error){
-        callback('Unable to connect to Google server.');
-    }
-    else if(body.status === 'ZERO_RESULTS' || 
-        body.status === "OVER_QUERY_LIMIT"
-    ) {
-        callback('Unable to connect to Google server.');
-    }
-    else if(body.status === 'OK') {
-        const data = body.results[0];
-        const location = data.geometry.location;
-        callback(undefined, {
-            address: `${data.formatted_address}`,
-            latitude: `${location.lat}`,
-            longtitude: `${location.lng}`
-        });
-    }
+    // 第二個參數為一call back function
+    request({
+        url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeAddress}`,
+        json: true,// 這邊告訴http我們要JSON
+    }, (error, response, body) => {
+        // 因為在上面所輸入的json true
+        // 在下面的body已經變為js了
+        // body指的是整個網頁的檔案或元素像是document之類的
+        // 所以說我們希望看到整個資料檔案，而不是js object時
+        // 我們用JSON.stringify來將body變回JSON
+        // 第二個argument我們不常使用，先設undefined
+        // 第三個argument是轉出的JSON data的格式定義
+        // 也就是指定在縮進中有多少空間
+        if(error){
+            callback('Unable to connect to Google server.');
+        }
+        else if(body.status === 'ZERO_RESULTS' || 
+            body.status === "OVER_QUERY_LIMIT"
+        ) {
+            callback('Unable to connect to Google server.');
+        }
+        else if(body.status === 'OK') {
+            const data = body.results[0];
+            const location = data.geometry.location;
+            // callback method中第一個參數為err，因為沒有err的關係
+            // 所以設為undefined
+            callback(undefined, {
+                address: `${data.formatted_address}`,
+                latitude: `${location.lat}`,
+                longtitude: `${location.lng}`
+            });
+        }
     
 });
 

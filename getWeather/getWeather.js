@@ -12,10 +12,12 @@ const getWeather = (latitude, longitude, callback) => {
         } else if(res.statusCode === 404) {
             console.log('can not fetch weather');
         } else if(!err && res.statusCode === 200) {
+            // 沒有err以及status為200
             const sendBackRes = {
                 lat: body.latitude,
                 lng: body.longitude,
                 currentTemperature: body.currently.temperature,
+                apparentTemperature: body.currently.apparentTemperature,
             }
             callback(undefined, sendBackRes);
         }
